@@ -1,0 +1,4 @@
+# To-Do List
+  - Finish and test "get keyboard language" functionality.
+  - Implement language parsing and automatic selection.
+  - Detect "ctrl+alt+supr" key sequence to start password recognition in Windows.
