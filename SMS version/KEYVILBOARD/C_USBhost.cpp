@@ -1,13 +1,22 @@
-
 #include "C_USBhost.h"
 
-const PROGMEM byte asciiMap[128] = {0,0,0,0,0,0,0,0,42,43,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,158,180,160,161,162,164,52,166,167,165,174,54,45,55,56,39,30,31,32,33,34,35,36,37,38,179,51,182,46,183,184,159,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,47,49,48,163,173,53,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,175,177,176,181,0};
-const PROGMEM byte keyPadMap[16] = {85,87,0,86,99,84,98,89,90,91,92,93,94,95,96,97};
+#ifndef DEFLANG
+  const PROGMEM byte asciiMap[128] = {0,0,0,0,0,0,0,0,42,43,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,158,180,160,161,162,164,52,166,167,165,174,54,45,55,56,39,30,31,32,33,34,35,36,37,38,179,51,182,46,183,184,159,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,47,49,48,163,173,53,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,175,177,176,181,0};
+  const PROGMEM byte keyPadMap[16] = {85,87,0,86,99,84,98,89,90,91,92,93,94,95,96,97};
+#else
+  if (DEFLANG == "en_US") {
+    const PROGMEM byte asciiMap[128] = {0,0,0,0,0,0,0,0,42,43,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,158,180,160,161,162,164,52,166,167,165,174,54,45,55,56,39,30,31,32,33,34,35,36,37,38,179,51,182,46,183,184,159,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,47,49,48,163,173,53,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,175,177,176,181,0};
+    const PROGMEM byte keyPadMap[16] = {85,87,0,86,99,84,98,89,90,91,92,93,94,95,96,97};
+  } else if (DEFLANG == "es_ES") {
+    const PROGMEM byte asciiMap[128] = {0,0,0,0,0,0,0,0,42,43,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,158,180,160,161,162,164,45,166,167,165,48,54,56,55,0,39,30,31,32,33,34,35,36,37,38,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,0,0,0,0};
+    const PROGMEM byte keyPadMap[16] = {85,87,0,86,99,84,98,89,90,91,92,93,94,95,96,97};
+  }
+#endif
+
 bool debug = false;
 
 C_USBhost::C_USBhost(HardwareSerial& s):
   serial(s) {
-  
 }
 
 C_USBhost::C_USBhost(HardwareSerial& s, bool debug_state):
@@ -19,6 +28,7 @@ C_USBhost::C_USBhost(HardwareSerial& s, bool debug_state):
 void C_USBhost::Begin(unsigned long baud_rate){
   serial.begin(baud_rate);
 }
+
 
 bool C_USBhost::SetBaudRate(char* baud_rate){
   serial.write("BAUD ");
@@ -32,9 +42,9 @@ bool C_USBhost::SetBaudRate(char* baud_rate){
     str[i++] = serial.read();
   }
 
-#ifdef DEBUG
+  #ifdef DEBUG
     Serial.print(F("USB host board, changing baud rate response: ")); Serial.println(str);
-#endif
+  #endif
   
   if(strstr(str, "Baud Rate Changed")){
     return true;
@@ -42,21 +52,19 @@ bool C_USBhost::SetBaudRate(char* baud_rate){
   return false;
 }
 
+
 bool C_USBhost::SetMode(char mode){
   serial.write("MODE ");
   serial.write(mode);
   serial.write("\r\n");
-  
   delay(500); 
-
   char str[65]; byte i;
   while(serial.available()){
     str[i++] = serial.read();
   }
-
-#ifdef DEBUG
+  #ifdef DEBUG
     Serial.print(F("USB host board, changing mode response: ")); Serial.println(str);
-#endif
+  #endif
   
   if(strstr(str, "Mode Changed")){
     return true;
@@ -66,9 +74,8 @@ bool C_USBhost::SetMode(char mode){
 
 
 byte C_USBhost::GetKey() {
-  // many keys can be pressed at the same time but only 1 value can be returned
-  // so there's an array that holds up to 6 keys that were potentially pressed
-  // until that array is empty no communication with usbhost will occur
+  // Many keys can be pressed at the same time but only 1 value can be returned, so there's an array that holds up to 6 keys that were potentially pressed.
+  // Until that array is empty no communication with usbhost will occur
   for(int i=0; i<6; i++){
     if(collectedAsciiValues[i]){
       byte val = collectedAsciiValues[i];
@@ -76,27 +83,23 @@ byte C_USBhost::GetKey() {
       return val;  
     }
   }
-  
   if (serial.available() > 0) {
     if (serial.available() == 63) {
-      fullBufferFlag_preventHold = true; //P(F("OCCUPIED BUFFER BYTES (serial.available): ")); PL((int)serial.available());
+      fullBufferFlag_preventHold = true;  // P(F("OCCUPIED BUFFER BYTES (serial.available): ")); PL((int)serial.available());
     }
-    hidText[hbc++] = serial.read(); // hbc is hid bytes count (number of bytes that was read already from USBhost which sends something like 00-00-04-00-00-00-00-00a)
-    hbc = IgnoreBytesIfUseless(hbc);                                       // decreases hbc if required
-
-    if (hbc == 26) {                                              // if the full string (25 bytes long) representing 8 HID values is received (e.g. "\n\r02-00-04-00-00-00-00-00")
+    hidText[hbc++] = serial.read();       // hbc is hid bytes count (number of bytes that was read already from USBhost which sends something like 00-00-04-00-00-00-00-00a)
+    hbc = IgnoreBytesIfUseless(hbc);      // decreases hbc if required
+    if (hbc == 26) {                      // if the full string (25 bytes long) representing 8 HID values is received (e.g. "\n\r02-00-04-00-00-00-00-00")
       hidText[hbc] = 0;
       ConvertInputToBytes(hidText, rawHID);
       Send_Report(rawHID);
       SaveTheKeys();
       CleanUpVars();
-
       FullBuffer_BugPrevention();
     }
   }
   return 0;
 }
-
 
 
 byte C_USBhost::IgnoreBytesIfUseless(byte index) {
@@ -106,6 +109,7 @@ byte C_USBhost::IgnoreBytesIfUseless(byte index) {
   return index;
 }
 
+
 void C_USBhost::ConvertInputToBytes(char* input, byte* raw_bytes) {
   for (byte j = 0; j < 8; j++) {
     char buff[3] = {input[j * 2 + j + 2], input[j * 2 + j + 3], 0};  // convert string to 8 HID bytes
@@ -113,6 +117,7 @@ void C_USBhost::ConvertInputToBytes(char* input, byte* raw_bytes) {
     memset(buff, 0, sizeof(buff));
   }
 }
+
 
 void C_USBhost::Send_Report(byte* bytes) {
   KeyReport kr = {bytes[0], bytes[1], 
@@ -125,26 +130,22 @@ void C_USBhost::Send_Report(byte* bytes) {
 
 
 void C_USBhost::SaveTheKeys(){
-  if(WasAnyKeyPressed()){
+  if(WasAnyKeyPressed()) {
     byte keys_pressed[6] = {0};
     GetKeysPressed(keys_pressed);
 
     for(int i = 0; i < sizeof(keys_pressed); i++)
     {
-       byte key = keys_pressed[i];
-       if(key){
-#ifdef DEBUG
+      byte key = keys_pressed[i];
+      if(key) {
+        #ifdef DEBUG
           Serial.print(F("\nrawHID string: ")); Serial.println(hidText);                                                                       // debug line
           Serial.print(F("rawHID key detected: hex - ")); Serial.print(key, HEX); Serial.print(F(", int - ")); Serial.println((int)key);       // debug line
-#endif
-        
+        #endif
         byte asciiKey = HID_to_ASCII(key, WasShiftDown());
-        
-        
-#ifdef DEBUG
-        Serial.print(F("Ascii key detected: hex - ")); Serial.print(asciiKey, HEX); Serial.print(F(", int - ")); Serial.print((int)asciiKey); Serial.print(F(", char - ")); Serial.println((char)asciiKey);
-#endif
-        
+        #ifdef DEBUG
+          Serial.print(F("Ascii key detected: hex - ")); Serial.print(asciiKey, HEX); Serial.print(F(", int - ")); Serial.print((int)asciiKey); Serial.print(F(", char - ")); Serial.println((char)asciiKey);
+        #endif
         if(asciiKey){
           collectedAsciiValues[i] = (char)asciiKey;
         }
@@ -152,16 +153,17 @@ void C_USBhost::SaveTheKeys(){
       }
       key = 0; 
     }
-  }
-  else if (WasModifierPressed()){} 
-  else{
-#ifdef DEBUG
+  } else if (WasModifierPressed()) {
+    // what to do here?
+  } else {
+      #ifdef DEBUG
         Serial.print(F("\nRELEASED_OR_LOST\nrawHID string: ")); 
         Serial.println(hidText);
-        //Serial.print(F("rawHID key detected: hex - ")); Serial.print(key, HEX); Serial.print(F(", int - ")); Serial.println((int)key);       // debug line
-#endif
+        Serial.print(F("rawHID key detected: hex - ")); Serial.print(key, HEX); Serial.print(F(", int - ")); Serial.println((int)key);       // debug line
+      #endif
   } // was released
 }
+
 
 byte C_USBhost::HID_to_ASCII(byte key, bool shiftDown){
   for(byte i=0; i<128; i++){                                                      // asciiMap contains HID values (some modified), their order indicates which ascii value should be used 
@@ -185,6 +187,7 @@ bool C_USBhost::WasAnyKeyPressed() {
   } return false;
 }
 
+
 bool C_USBhost::WasKeyPreviouslyPressed(byte key){
   for (int i = 2; i < 8; i++) {
     if(prevRawHID[i] == key){
@@ -193,9 +196,11 @@ bool C_USBhost::WasKeyPreviouslyPressed(byte key){
   } return false;
 }
 
+
 bool C_USBhost::WasModifierPressed() {
   return ((rawHID[0] > 0) && (rawHID[0] != prevRawHID[0]));
 }
+
 
 void C_USBhost::GetKeysPressed(byte* keys_pressed) {
   for (int i = 2; i < 8; i++) {
@@ -205,24 +210,27 @@ void C_USBhost::GetKeysPressed(byte* keys_pressed) {
   }
 }
 
+
 bool C_USBhost::WasShiftDown() {
   return (IsBitHigh(rawHID[0], 1) || IsBitHigh(rawHID[0], 5)); // if 2nd or 6th bit (left/right shift)
 }
+
 
 bool C_USBhost::IsBitHigh(byte byteToConvert, byte bitToReturn) {
   byte mask = 1 << bitToReturn;  // thanks to Marc Gravell's https://stackoverflow.com/questions/9804866/return-a-specific-bit-as-boolean-from-a-byte-value
   return (byteToConvert & mask) == mask;
 }
 
+
 void C_USBhost::ReleaseAllButtons(char* reason) {
   KeyReport kr = {0, 0, {0, 0, 0, 0, 0, 0}};
   HID().SendReport(2, &kr, sizeof(KeyReport));
-   
-#ifdef DEBUG
-  Serial.print(F("RELEASING ALL BUTTONS. Reason: ")); 
-  Serial.println(reason);
-#endif
+  #ifdef DEBUG
+    Serial.print(F("RELEASING ALL BUTTONS. Reason: ")); 
+    Serial.println(reason);
+  #endif
 }
+
 
 void C_USBhost::CleanUpVars() {
   for (byte j = 0; j < sizeof(rawHID); j++) {
@@ -232,6 +240,7 @@ void C_USBhost::CleanUpVars() {
   memset(hidText, 0, sizeof(hidText));
   hbc = 0;
 }
+
 
 void C_USBhost::FullBuffer_BugPrevention() {
   if (fullBufferFlag_preventHold) {
