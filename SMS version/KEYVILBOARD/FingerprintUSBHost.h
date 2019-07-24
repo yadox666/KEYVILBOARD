@@ -35,6 +35,7 @@ typedef enum {
 } OSVariant;
 };
 
+
 class FingerprintUSBHost_ : public PluggableUSBModule {
   public:
     FingerprintUSBHost_(void);
@@ -47,7 +48,6 @@ class FingerprintUSBHost_ : public PluggableUSBModule {
     int getInterface(uint8_t* interfaceCount);
     int getDescriptor(USBSetup& setup);
     bool setup(USBSetup& setup);
-
 
   private:
     uint8_t epType[0];
