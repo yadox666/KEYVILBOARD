@@ -69,7 +69,7 @@ Manual##Action##Argument
 
 * SIM Lock remove
 
-     Make sure your remove the simlock from the simcard you intent to use in Module easy way to do that is by putting it in an older phone and removing it their not all new phones have the option.
+     Make sure your remove the simlock from the simcard you intent to use in Module. Insert it in a phone/smartphone. Go to security menu and remove PIN inserting the actual one first.
   
 * SIM Advice
   
@@ -77,19 +77,19 @@ Manual##Action##Argument
 
 * SIM Orientation
 
-	![Look at the SIM corner](./img/IMG_20190716_192137.jpg)
+	![Look at the SIM corner](/extras/IMG_20190716_192137.jpg)
   
 
 2. KEYVILBOARD Setup
 
-* Arduino
+* Arduino IDE
      
-     Our code works with the arduino leonardo bootloader make sure you download the arduino IDE and you have a simple understand of how it works.
+     The included code works with the arduino Leonardo bootloader. Make sure you download the Arduino IDE and you have a simple understand of how it works.
       
-     The code is set and done Furthermore we have allready prepared and tested all modules that go out the door all you have to do is add your phone number in the 2 text send methods and upload it with the arduino leonardo board and com-port selected.
+    Do not forget that flashing the firmware using Arduino IDE or the necessary binary needs to be ran on root user or adding your actual user to the dialup group in Linux. I do not use Windows, so DO NOT ASK about IT!
 
 
-1. Modify buffer size in Android library:
+1. It's necessary to modify buffer size in Android library:
 
 ```
 find . -name SoftwareSerial.h
@@ -131,7 +131,7 @@ find . -name SoftwareSerial.h
 //#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##lnx##PASSWORD##touch /tmp/malware"
 ```
 
-3. Modify devices USB VID & PID to keep stealth. This hack will spoof the original device VID & PID (arduino leonardo) to spoof them with a fake one.
+3. Optionally you can modify the device USB VID & PID to keep stealth. This hack will spoof the original device VID & PID (arduino leonardo) to spoof them with a fake one.
  - Select any manufacturer and device usb.ids [./extras/usb.ids][VID/PID list]. Write down your favourite VID & PID.
 	
 4. Modifying arduino device library (comment and copy the original VID/PID lines)
@@ -162,9 +162,9 @@ nano /opt/arduino-1.8.3/hardware/arduino/avr/boards.txt
 
 6. Revise file: payloads.ccp and change *arduino* for *HIDPCD*
 
-7. Exit Arduino IDE and re-enter.
+7. Exit Arduino IDE and re-enter. Verify and compile the project.
 
-8. Flash your project again to the device.
+8. Flash the project again to the device.
 
 9. Extract it and insert it again. Run:
 
@@ -181,7 +181,6 @@ $ dmesg
 [12088.471630] input: Unknown Standard Keyboard as /devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1:1.2/0003:03F9:0102.001B/input/input42
 [12088.531047] hid-generic 0003:03F9:0102.001B: input,hidraw0: USB HID v1.01 Keyboard [Unknown Standard Keyboard] on usb-0000:00:14.0-1/input2
 ```
-
 
 
 ## Flashing (verify, compile and upload)
