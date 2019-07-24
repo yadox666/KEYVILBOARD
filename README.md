@@ -1,7 +1,7 @@
 # KEYVILBOARD
 
 
-## [SMS Version](https://github.com/yadox666/KEYVILBOARD/blob/master/SMS)
+## [SMS Version](https://github.com/yadox666/KEYVILBOARD/tree/master/SMS%20version)
 - This folder contains the instructions, code + libary used within the SMS version.
 
 > This is a fork of the original Keyvilboard SMS version: [open link](https://github.com/RedBulletTooling/KEYVILBOARD)
