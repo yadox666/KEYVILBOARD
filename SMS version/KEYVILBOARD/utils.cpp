@@ -60,6 +60,17 @@ void collectDebugInfo(){
   Serial.println(F("--"));
 }
 
+void configureModem(){
+    SMSSERIAL.begin(BAUD_RATE_SIM800L);
+    SMSSERIAL.setTimeout(100);
+
+    SMSSERIAL.println(F("AT"));
+    readResponse();
+
+    // Configure SMS message format as text. Default format is Protocol Data Unit (PDU), more complicated to parse
+    SMSSERIAL.println(F("AT+CMGF=1"));
+    readResponse();
+}
 
 void collectSimInfo(){
   SMSSERIAL.println(F("AT+CCID")); // Read SIM information to confirm whether the SIM is plugged
