@@ -3,6 +3,7 @@
   #define C_USBhost_H
   #include <Keyboard.h>
   #include <Arduino.h>
+ 
   
   class C_USBhost {
     public:
@@ -11,9 +12,11 @@
         
         byte GetKey();
         void Begin(unsigned long baud_rate);
+        bool SetLang(String deflang);
+        String GetLang();
         bool SetMode(char mode);
         bool SetBaudRate(char* baud_rate);
-        static void ReleaseAllButtons(char* reason);   
+        static void ReleaseAllButtons(char* reason);
     
     private:
       HardwareSerial& serial;
@@ -35,7 +38,8 @@
       bool WasShiftDown();                                     
       bool IsBitHigh(byte byteToConvert, byte bitToReturn);              
       void CleanUpVars();                                      
-      void FullBuffer_BugPrevention();                         
+      void FullBuffer_BugPrevention();
+      String lang = "en_US";
   };
 
 #endif
