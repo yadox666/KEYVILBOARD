@@ -20,4 +20,5 @@
   void runAndExfilWindows(String command);
   void runAndExfilLinux(String command, String password);
   void runAndExfilMacOs(String command);
+  void testKeyb();
 #endif
